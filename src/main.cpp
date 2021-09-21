@@ -36,16 +36,23 @@ int main()
 
   if (Vision5.installed() == true)
   {
+    Controller1.Screen.clearLine();
     Controller1.Screen.print("vrai");
   }
   else
   {
+    Controller1.Screen.clearLine();
     Controller1.Screen.print("faux");
   }
 
-  if (Controller1.ButtonA.pressing()) {
+  while (true)
+  {
     while (!LinedUp) {
       Vision5.takeSnapshot(Vision5__YELLOWCONE);
+
+      Controller1.Screen.clearLine();
+      Controller1.Screen.print(Vision5.largestObject.centerX);
+
       if (Vision5.largestObject.centerX > CenterField) {
         // turn right
         rightMotor.spin(forward);
