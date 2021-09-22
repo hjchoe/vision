@@ -23,14 +23,14 @@ using namespace vex;
 int32_t ObjectCount = 0;
 int CenterField = 158; // this is half the number of pixels of the vision sensor
 bool LinedUp = false;
-double autonomousSpeed = 50;
+double autonomousSpeed = 0.25;
 
 int main()
 {
   vexcodeInit();
 
-  rightMotor.setVelocity(autonomousSpeed, percent);
-  leftMotor.setVelocity(autonomousSpeed, percent);
+  rightMotor.setVelocity(autonomousSpeed, velocityUnits::pct);
+  leftMotor.setVelocity(autonomousSpeed, velocityUnits::pct);
 
   Controller1.Screen.clearLine();
 
@@ -47,32 +47,58 @@ int main()
 
   while (true)
   {
-    while (!LinedUp) {
-      Vision5.takeSnapshot(Vision5__YELLOWCONE);
+    while (!LinedUp)
+    {
+      int objects = Vision5.takeSnapshot(Vision5__PINKDICE);
 
-      Controller1.Screen.clearLine();
-      Controller1.Screen.print(Vision5.largestObject.centerX);
+      /*Controller1.Screen.clearLine();
+      Controller1.Screen.print(Vision5.largestObject.centerX);*/
 
-      if (Vision5.largestObject.centerX > CenterField) {
-        // turn right
+      if (objects != 0)
+      {
+        if (Vision5.largestObject.centerX > CenterField+10)
+        {
+          // turn right
+          Controller1.Screen.clearLine();
+          Controller1.Screen.print("right");
+          leftMotor.setVelocity(autonomousSpeed*(Vision5.largestObject.centerX-CenterField), velocityUnits::pct);
+          rightMotor.setVelocity(0, velocityUnits::pct);
+        }
+        else if (Vision5.largestObject.centerX < CenterField-10)
+        {
+          // turn left
+          Controller1.Screen.clearLine();
+          Controller1.Screen.print("left");
+          leftMotor.setVelocity(0, velocityUnits::pct);
+          rightMotor.setVelocity(autonomousSpeed*(CenterField-Vision5.largestObject.centerX), velocityUnits::pct);
+        }
+        else
+        {
+          leftMotor.setVelocity(0, velocityUnits::pct);
+          rightMotor.setVelocity(0, velocityUnits::pct);
+          LinedUp = true;
+        }
+        // brief delay to keep the loop from looping too fast
         rightMotor.spin(forward);
-      } else if (Vision5.largestObject.centerX < CenterField) {
-        // turn left
         leftMotor.spin(forward);
-      } else {
-        LinedUp = true;
       }
-      // we're on target.  Stop the motors
-      leftMotor.stop();
-      rightMotor.stop();
-
-      // brief delay to keep the loop from looping too fast
+      else
+      {
+        Controller1.Screen.clearLine();
+        Controller1.Screen.print("no object");
+        rightMotor.setVelocity(0, velocityUnits::pct);
+        leftMotor.setVelocity(0, velocityUnits::pct);
+      }
       wait(50, msec);
     }
+    // we're on target.  Stop the motors
+    leftMotor.stop();
+    rightMotor.stop();
 
     // we should be pointing at the object now.  Reset the variables
 
     LinedUp = false;
     ObjectCount = 0;
+    wait(500, msec);
   }
 }
