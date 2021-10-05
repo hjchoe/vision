@@ -9,9 +9,12 @@ brain  Brain;
 
 // VEXcode device constructors
 /*vex-vision-config:begin*/
-signature Vision5__YELLOWCONE = signature (1, 1381, 2157, 1769, -4285, -3811, -4048, 2.5, 0);
-signature Vision5__PINKDICE = signature (2, 5221, 7885, 6553, -1, 677, 338, 2.6, 0);
-vision Vision5 = vision (PORT5, 50, Vision5__YELLOWCONE, Vision5__PINKDICE);
+signature Vision5__YELLOWCONE = signature (1, 0, 0, 0, 0, 0, 0, 3, 0);
+signature Vision5__PINKDICE = signature (2, 0, 0, 0, 0, 0, 0, 3, 0);
+signature Vision5__HIGHREDGOAL = signature (3, 6729, 9593, 8161, -1795, -885, -1340, 4.4, 0);
+signature Vision5__HIGHBLUEGOAL = signature (4, -3145, -1333, -2239, 5461, 11189, 8325, 2.2, 0);
+signature Vision5__HIGHYELLOWGOAL = signature (5, 149, 2571, 1360, -4359, -3459, -3909, 2.4, 0);
+vision Vision5 = vision (PORT5, 50, Vision5__YELLOWCONE, Vision5__PINKDICE, Vision5__HIGHREDGOAL, Vision5__HIGHBLUEGOAL, Vision5__HIGHYELLOWGOAL);
 /*vex-vision-config:end*/
 controller Controller1 = controller(primary);
 motor rightMotor = motor(PORT11, ratio18_1, true);
